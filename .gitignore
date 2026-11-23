@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+*.db
+backend/*.db
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Uploads & Storage
+uploads/
+backend/uploads/
+
+# OS
+.DS_Store
+Thumbs.db

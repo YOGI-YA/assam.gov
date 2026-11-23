@@ -99,7 +99,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
     <>
       {/* DESKTOP SIDEBAR: Fixed width on medium & larger screens */}
-      <aside className="hidden md:flex w-56 bg-[#f8fafc] border-r border-slate-200 flex-col justify-between shrink-0 min-h-[calc(100vh-4.6rem)] p-4">
+      <aside className="hidden md:flex w-56 bg-[#f8fafc] border-r border-slate-200 flex-col justify-between shrink-0 h-full p-4 overflow-y-auto">
         {renderNavContent()}
       </aside>
 

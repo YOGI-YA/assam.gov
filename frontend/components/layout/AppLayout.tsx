@@ -13,17 +13,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, currentModule })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans">
+    <div className="h-screen bg-[#f8fafc] flex flex-col font-sans overflow-hidden">
       <Navbar 
         onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} 
         isMobileMenuOpen={mobileMenuOpen}
       />
-      <div className="flex-1 flex w-full">
+      <div className="flex-1 flex w-full min-h-0 overflow-hidden">
         <Sidebar 
           isOpen={mobileMenuOpen} 
           onClose={() => setMobileMenuOpen(false)} 
         />
-        <main className="flex-1 overflow-x-hidden p-3 sm:p-5 lg:p-6 bg-[#f8fafc]">
+        <main className="flex-1 overflow-hidden p-2.5 sm:p-4 lg:p-5 bg-[#f8fafc] flex flex-col min-h-0">
           {children}
         </main>
       </div>

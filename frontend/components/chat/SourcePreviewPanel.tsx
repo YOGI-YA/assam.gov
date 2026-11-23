@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  FileText, ExternalLink, ChevronLeft, ChevronRight, 
+import {
+  FileText, ExternalLink, ChevronLeft, ChevronRight,
   ZoomIn, ZoomOut, Maximize2, ShieldCheck, Database,
   Layers, CheckCircle2, Bookmark
 } from 'lucide-react';
@@ -37,9 +37,9 @@ export const SourcePreviewPanel: React.FC<SourcePreviewPanelProps> = ({ citation
   // EMPTY STATE when no document is active
   if (!citation) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-5 shadow-xs flex flex-col h-full min-h-[420px] sm:min-h-[580px]">
+      <div className="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-xs flex flex-col h-full min-h-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
+        <div className="flex items-center justify-between mb-3 shrink-0">
           <div className="flex items-center space-x-2 text-slate-900 font-bold text-sm sm:text-base">
             <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-slate-800" strokeWidth={1.8} />
             <span>Source Document</span>
@@ -57,7 +57,7 @@ export const SourcePreviewPanel: React.FC<SourcePreviewPanelProps> = ({ citation
         </div>
 
         {/* Empty State Presentation */}
-        <div className="flex-1 border border-dashed border-slate-200 rounded-xl p-5 flex flex-col items-center justify-center text-center bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto min-h-0 border border-dashed border-slate-200 rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center bg-slate-50/50">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700 mb-3 shadow-2xs">
             <Bookmark className="w-6 h-6 text-blue-600" />
           </div>
@@ -66,39 +66,47 @@ export const SourcePreviewPanel: React.FC<SourcePreviewPanelProps> = ({ citation
             Source Document Preview
           </h3>
           <p className="text-xs text-slate-500 max-w-xs leading-relaxed mb-5">
-            Upload your departmental PDF or submit a query to view verified source citations, exact page numbers, and highlighted clauses.
+            Submit a query or click any suggested prompt to view verified source citations, exact page numbers, and highlighted clauses.
           </p>
 
-          {/* Verification Protocol Card */}
+          {/* Indexed Repositories List */}
           <div className="w-full bg-white rounded-xl border border-slate-200 p-3.5 text-left shadow-2xs">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold text-slate-900 flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-blue-600" />
-                Document Verification
+                Indexed Knowledge Base
               </span>
-              <span className="bg-blue-50 text-blue-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-blue-200">
-                Grounded
+              <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
+                8 Sources Ready
               </span>
             </div>
 
-            <div className="space-y-2 text-[11px] text-slate-600">
-              <div className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span>Upload official notifications, guidelines, or manuals</span>
+            <div className="space-y-1.5 text-[11px] text-slate-600">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>NESFIC 2026 Guidelines (uspr.pdf)</span>
               </div>
-              <div className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                <span>Automatic text chunking and vector indexation</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>ASDMA Flood Hazard Atlas & NESDR</span>
               </div>
-              <div className="flex items-start gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 shrink-0 mt-0.5" />
-                <span>Click any source citation badge to open the verified page</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>ISRO Bhuvan, VEDAS & MOSDAC Data</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>Assam State Geoportal & Data.gov.in</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>Assam Pension Rules & Secretariat Manual</span>
               </div>
             </div>
 
             <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[10px] text-slate-500">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>Answers are strictly grounded against verified document pages.</span>
+              <span>Departmental PDFs uploaded in Documents are automatically indexed.</span>
             </div>
           </div>
         </div>
@@ -108,7 +116,7 @@ export const SourcePreviewPanel: React.FC<SourcePreviewPanelProps> = ({ citation
 
   // ACTIVE CITATION PRESENTATION
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-5 shadow-xs flex flex-col h-full min-h-[420px] sm:min-h-[580px]">
+    <div className="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-xs flex flex-col h-full min-h-0 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
         <div className="flex items-center space-x-2 text-slate-900 font-bold text-sm sm:text-base">
@@ -206,8 +214,8 @@ export const SourcePreviewPanel: React.FC<SourcePreviewPanelProps> = ({ citation
       </div>
 
       {/* High-Fidelity Rendered PDF Page Sheet */}
-      <div className="flex-1 bg-slate-100/70 p-3 rounded-xl flex items-center justify-center overflow-auto">
-        <div 
+      <div className="flex-1 min-h-0 bg-slate-100/70 p-3 rounded-xl flex items-center justify-center overflow-auto">
+        <div
           className="bg-white border border-slate-200/90 rounded-lg shadow-md w-full max-w-[340px] p-6 text-slate-800 text-xs leading-relaxed transition-transform duration-150"
           style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'top center' }}
         >

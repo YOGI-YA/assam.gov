@@ -66,47 +66,39 @@ export const SourcePreviewPanel: React.FC<SourcePreviewPanelProps> = ({ citation
             Source Document Preview
           </h3>
           <p className="text-xs text-slate-500 max-w-xs leading-relaxed mb-5">
-            Submit a query or click any suggested prompt to view verified source citations, exact page numbers, and highlighted clauses.
+            Upload your departmental PDF or submit a query to view verified source citations, exact page numbers, and highlighted clauses.
           </p>
 
-          {/* Indexed Repositories List */}
+          {/* Verification Protocol Card */}
           <div className="w-full bg-white rounded-xl border border-slate-200 p-3.5 text-left shadow-2xs">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold text-slate-900 flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-blue-600" />
-                Indexed Knowledge Base
+                Document Verification
               </span>
-              <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200">
-                8 Sources Ready
+              <span className="bg-blue-50 text-blue-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-blue-200">
+                Grounded
               </span>
             </div>
 
-            <div className="space-y-1.5 text-[11px] text-slate-600">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>NESFIC 2026 Guidelines (uspr.pdf)</span>
+            <div className="space-y-2 text-[11px] text-slate-600">
+              <div className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Upload official notifications, guidelines, or manuals</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>ASDMA Flood Hazard Atlas & NESDR</span>
+              <div className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                <span>Automatic text chunking and vector indexation</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>ISRO Bhuvan, VEDAS & MOSDAC Data</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>Assam State Geoportal & Data.gov.in</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>Assam Pension Rules & Secretariat Manual</span>
+              <div className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 shrink-0 mt-0.5" />
+                <span>Click any source citation badge to open the verified page</span>
               </div>
             </div>
 
             <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[10px] text-slate-500">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span>Departmental PDFs uploaded in Documents are automatically indexed.</span>
+              <span>Answers are strictly grounded against verified document pages.</span>
             </div>
           </div>
         </div>

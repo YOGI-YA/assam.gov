@@ -8,6 +8,7 @@ import {
   CornerDownRight, ChevronRight, MessageSquare
 } from 'lucide-react';
 import { PdfBadge } from '@/components/ui/PdfBadge';
+import { AssamEmblem } from '@/components/ui/AssamEmblem';
 import { SourcePreviewPanel } from './SourcePreviewPanel';
 import { CitationItem, DocumentItem } from '@/types';
 import { api } from '@/lib/api';
@@ -532,66 +533,97 @@ export const AskGovSaarthi: React.FC = () => {
         </div>
 
         {/* White Chat Main Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-5 lg:p-6 shadow-xs flex flex-col space-y-4 sm:space-y-6 min-h-[400px] sm:min-h-[500px]">
+        <div className="relative bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-5 lg:p-6 shadow-xs flex flex-col space-y-4 sm:space-y-6 min-h-[440px] sm:min-h-[520px] overflow-hidden">
           
+          {/* Subtle Background Watermark Logo */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.035] -z-0">
+            <AssamEmblem className="w-80 h-96 scale-150 text-slate-900" />
+          </div>
+
           {/* INITIAL STATE: When no messages have been sent yet */}
           {messages.length === 0 && (
-            <div className="flex flex-col justify-center my-auto py-2 sm:py-4">
+            <div className="relative z-10 flex flex-col justify-center my-auto py-2 sm:py-4">
               {/* Welcome Badge */}
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0f243a] text-white flex items-center justify-center shadow-xs shrink-0">
-                  <Landmark className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="flex items-center space-x-3 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-[#0f243a] text-white flex items-center justify-center shadow-xs shrink-0">
+                  <Landmark className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                     Official Knowledge Assistant
                     <span className="bg-blue-100 text-blue-800 text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full">
                       NESFIC 2026
                     </span>
                   </h2>
-                  <p className="text-[11px] sm:text-xs text-slate-500">
-                    Grounded intelligence across verified Assam government manuals, circulars, and state geospatial portals.
+                  <p className="text-xs text-slate-500">
+                    Upload official government manuals, circulars, or gazette notifications to query with verified citations.
                   </p>
                 </div>
               </div>
 
-              {/* Instructions Header */}
-              <div className="border-t border-slate-100 pt-3 sm:pt-4 mb-3">
-                <p className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                  Suggested official inquiries to explore:
+              {/* Prominent Upload Dropzone Card */}
+              <div 
+                onClick={handlePaperclipClick}
+                className="border-2 border-dashed border-blue-200/90 hover:border-blue-500 bg-gradient-to-b from-blue-50/40 via-white to-slate-50/60 hover:bg-blue-50/50 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all group shadow-2xs"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-blue-100/90 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-xs">
+                  {uploadingPdf ? (
+                    <Loader2 className="w-7 h-7 animate-spin text-blue-600 group-hover:text-white" />
+                  ) : (
+                    <FileUp className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" />
+                  )}
+                </div>
+
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1">
+                  {uploadingPdf ? `Indexing ${uploadingFileName}...` : 'Upload Official PDF Document'}
+                </h3>
+                <p className="text-xs text-slate-500 max-w-sm leading-relaxed mb-4">
+                  Upload departmental orders, rules, circulars, or guidelines. GovSaarthi will automatically extract, chunk, and index the text for verifiable retrieval.
                 </p>
+
+                <button
+                  type="button"
+                  disabled={uploadingPdf}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-[#2563eb] hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>{uploadingPdf ? 'Processing Document...' : 'Select PDF to Upload'}</span>
+                </button>
+
+                <div className="flex items-center gap-3 mt-3 text-[11px] text-slate-400">
+                  <span>PDF format up to 25MB</span>
+                  <span>•</span>
+                  <span>Vector Indexed</span>
+                  <span>•</span>
+                  <span>Source Grounded</span>
+                </div>
               </div>
 
-              {/* 4 Interactive Suggestion Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
-                {SUGGESTED_PROMPTS.map((prompt, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => executeQuery(prompt.query)}
-                    className="text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/30 bg-slate-50/60 transition-all group flex flex-col justify-between shadow-2xs"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
-                          {prompt.category}
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
-                      </div>
-                      <h3 className="text-xs font-bold text-slate-900 mb-1 leading-snug">
-                        {prompt.title}
-                      </h3>
-                      <p className="text-[11px] text-slate-600 leading-normal line-clamp-2">
-                        &ldquo;{prompt.query}&rdquo;
-                      </p>
-                    </div>
-                    <div className="text-[10px] text-slate-400 font-medium mt-2.5 flex items-center gap-1">
-                      <BookOpen className="w-3 h-3 text-slate-400" />
-                      <span className="truncate">{prompt.sourceLabel}</span>
-                    </div>
-                  </button>
-                ))}
+              {/* Three Trust & Capability Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-4">
+                <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3 flex items-start space-x-2.5 text-left">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Instant Parsing</span>
+                    <span className="text-[11px] text-slate-500 leading-snug">Extracts clauses, headings, and lists cleanly.</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3 flex items-start space-x-2.5 text-left">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Exact Page Citations</span>
+                    <span className="text-[11px] text-slate-500 leading-snug">Answers link directly to source page numbers.</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3 flex items-start space-x-2.5 text-left">
+                  <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Zero Hallucinations</span>
+                    <span className="text-[11px] text-slate-500 leading-snug">Strict verification against uploaded text.</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}

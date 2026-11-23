@@ -411,6 +411,7 @@ Date: {today_str}
 *DRAFT ONLY — Generated via GovSaarthi. Requires human officer review and physical/digital signature prior to issuance.*"""
 
         elif req.draft_type == "formal_letter":
+            target_auth = req.target_authority or "The Head of Department / Director,\nGovernment of Assam, Guwahati"
             return f"""**GOVERNMENT OF ASSAM**
 **ASSAM ADMINISTRATIVE STAFF COLLEGE (AASC) / DEPT. OF SCIENCE & TECHNOLOGY**
 **JAWAHARNAGAR, KHANAPARA, GUWAHATI - 781022**
@@ -419,7 +420,7 @@ Letter No.: {ref_no}
 Dated: {today_str}
 
 To,
-{req.target_authority or 'The Head of Department / Director,\nGovernment of Assam, Guwahati'}
+{target_auth}
 
 Subject: {req.subject}
 

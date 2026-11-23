@@ -19,5 +19,5 @@ COPY . .
 # Expose FastAPI port
 EXPOSE 8000
 
-# Run FastAPI via Uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run FastAPI via Uvicorn (uses Render's $PORT or defaults to 8000)
+CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

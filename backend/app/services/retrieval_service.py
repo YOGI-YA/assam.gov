@@ -115,7 +115,7 @@ class RetrievalService:
             # cosine similarity = 1 - cosine distance
             try:
                 filter_clause = "WHERE d.processing_status = 'INDEXED'"
-                params = {"query_emb": query_embedding, "k": k}
+                params = {"query_emb": str(query_embedding), "k": k}
                 if document_id:
                     filter_clause += " AND d.id = :doc_id"
                     params["doc_id"] = document_id
@@ -132,11 +132,11 @@ class RetrievalService:
                         d.filename as document_name,
                         c.page_number,
                         c.chunk_text,
-                        1 - (c.embedding <=> :query_emb) as similarity
+                        1 - (c.embedding <=> cast(:query_emb as vector)) as similarity
                     FROM document_chunks c
                     JOIN documents d ON c.document_id = d.id
                     {filter_clause}
-                    ORDER BY c.embedding <=> :query_emb
+                    ORDER BY c.embedding <=> cast(:query_emb as vector)
                     LIMIT :k
                 """
                 cursor = db.execute(text(sql), params)
@@ -152,6 +152,7 @@ class RetrievalService:
                             "similarity": similarity
                         })
             except Exception as e:
+                db.rollback()
                 logger.warning(f"pgvector query failed, using in-memory retrieval fallback: {e}")
                 results = self._fallback_in_memory_retrieval(db, query, query_embedding, document_id, allowed_docs, k, thresh)
         else:

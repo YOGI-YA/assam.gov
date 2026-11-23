@@ -1,4 +1,4 @@
-# GovSaarthi — Government Knowledge Assistant (NESFIC 2026 MVP)
+# assam.gov — Government Knowledge Assistant (NESFIC 2026 MVP)
 
 **Challenge ID:** NESFIC-D-36 | **Stream 1:** Governance & Administrative Intelligence  
 **Administrative Context:** Assam Administrative Staff College (AASC), Department of Science & Technology (DST), and Assam State Space Application Centre (ASSAC).  
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-GovSaarthi is a secure, source-grounded document intelligence platform developed as an MVP for government officers. In administrative departments, officers must review extensive circulars, manuals, notifications, and office orders. GovSaarthi allows authorized personnel to query indexed government documents, receive factually grounded answers with verified citations, inspect original PDF pages side-by-side, generate standard Assam Government administrative drafts (Office Notes, Formal Letters, Office Orders), and maintain immutable audit trails.
+assam.gov is a secure, source-grounded document intelligence platform developed as an MVP for government officers. In administrative departments, officers must review extensive circulars, manuals, notifications, and office orders. GovSaarthi allows authorized personnel to query indexed government documents, receive factually grounded answers with verified citations, inspect original PDF pages side-by-side, generate standard Assam Government administrative drafts (Office Notes, Formal Letters, Office Orders), and maintain immutable audit trails.
 
 > **Demonstration Environment Disclaimer:**  
 > This application is a technical demonstration MVP developed for the NESFIC 2026 challenge. It clearly identifies itself as a demonstration prototype and does not imply that it is an officially deployed Assam Government production system.

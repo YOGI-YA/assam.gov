@@ -1,15 +1,11 @@
 services:
   - type: web
     name: govsaarthi-backend
-    runtime: python
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    runtime: docker
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.9
       - key: ENVIRONMENT
         value: production
       - key: LOG_LEVEL

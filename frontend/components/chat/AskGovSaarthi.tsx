@@ -23,6 +23,33 @@ interface SourceDocItem {
   excerpt: string;
 }
 
+const SUGGESTED_PROMPTS = [
+  {
+    category: 'NESFIC 2026 Public Resources',
+    title: 'Portal Data & Geospatial Resources',
+    query: 'What public resources, open data portals, and geospatial platforms are available on the NESFIC 2026 portal for challenge candidates?',
+    sourceLabel: 'Data.gov.in, Bhuvan, VEDAS, MOSDAC, Survey of India, Geoportal, NESDR, DES & ASDMA'
+  },
+  {
+    category: 'NESFIC 2026 Challenge Guidelines',
+    title: 'Uniform Proposal Requirements (USPR)',
+    query: 'What are the mandatory proposal components and evaluation dimensions under the NESFIC 2026 Uniform Solution Proposal Requirements (USPR)?',
+    sourceLabel: 'startup.assam.gov.in/nesfic26/docs/uspr.pdf'
+  },
+  {
+    category: 'Earth Observation & State Mapping',
+    title: 'Satellite Data & State Geoportal',
+    query: 'What satellite imagery, climate data, and spatial planning layers are hosted on Bhuvan, VEDAS, MOSDAC, and the Assam State Geoportal?',
+    sourceLabel: 'ISRO Bhuvan, SAC VEDAS, MOSDAC & Directorate of Town & Country Planning'
+  },
+  {
+    category: 'Disaster Response & Relief SOP',
+    title: 'ASDMA Citizens SOP & SDRF Norms',
+    query: 'What immediate actions should citizens take during a disaster, and what are the SDRF relief norms and 3-tier DDMA verification steps?',
+    sourceLabel: 'ASDMA Disaster Response SOP & SDRF Manual (Notifications 2023/45 & 2024/08)'
+  }
+];
+
 const FOLLOW_UP_SUGGESTIONS: Record<string, string[]> = {
   default: [
     'What scale does Survey of India provide maps in?',
@@ -457,11 +484,10 @@ export const AskGovSaarthi: React.FC = () => {
         <button
           type="button"
           onClick={() => setMobileTab('chat')}
-          className={`flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-            mobileTab === 'chat'
-              ? 'bg-white text-blue-700 shadow-2xs font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
+          className={`flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${mobileTab === 'chat'
+            ? 'bg-white text-blue-700 shadow-2xs font-bold'
+            : 'text-slate-600 hover:text-slate-900'
+            }`}
         >
           <MessageSquare className="w-3.5 h-3.5" />
           <span>Chat & Inquiries</span>
@@ -472,11 +498,10 @@ export const AskGovSaarthi: React.FC = () => {
         <button
           type="button"
           onClick={() => setMobileTab('source')}
-          className={`flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-            mobileTab === 'source'
-              ? 'bg-white text-blue-700 shadow-2xs font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
+          className={`flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 ${mobileTab === 'source'
+            ? 'bg-white text-blue-700 shadow-2xs font-bold'
+            : 'text-slate-600 hover:text-slate-900'
+            }`}
         >
           <FileText className="w-3.5 h-3.5" />
           <span>Source Document</span>
@@ -525,68 +550,75 @@ export const AskGovSaarthi: React.FC = () => {
 
           {/* SCROLLABLE MESSAGE STREAM & EMPTY STATE */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 space-y-4 min-h-0 relative z-10 scroll-smooth">
-            
-            {/* INITIAL EMPTY STATE: Upload Document & Welcome with Background Logo */}
+
+            {/* INITIAL STATE: Welcome with Official Suggestions & Background Logo */}
             {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full min-h-[380px] py-4 sm:py-6 px-2 sm:px-4 text-center my-auto">
-                
-                {/* Central Emblem Badge */}
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700 mb-3 shadow-2xs">
-                  <AssamEmblem className="w-10 h-10 scale-110" />
+              <div className="flex flex-col justify-center my-auto py-2 sm:py-4 relative z-10">
+                {/* Welcome Header */}
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0f243a] text-white flex items-center justify-center shadow-xs shrink-0">
+                    <Landmark className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                      Official Knowledge Assistant
+                      <span className="bg-blue-100 text-blue-800 text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                        NESFIC 2026
+                      </span>
+                    </h2>
+                    <p className="text-[11px] sm:text-xs text-slate-500">
+                      Grounded intelligence across verified Assam government manuals, circulars, and state geospatial portals.
+                    </p>
+                  </div>
                 </div>
 
-                <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                  Government Knowledge Assistant
-                </h2>
-                <p className="text-xs sm:text-[13px] text-slate-500 max-w-md mt-1 mb-4">
-                  Upload your departmental PDF document or ask questions. All responses are verified against exact gazette pages and clauses.
-                </p>
-
-                {/* Upload Dropzone Card */}
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  onClick={handlePaperclipClick}
-                  className={`w-full max-w-md border-2 border-dashed rounded-2xl p-5 sm:p-7 cursor-pointer transition-all flex flex-col items-center justify-center ${
-                    isDragging 
-                      ? 'border-blue-500 bg-blue-50/80 scale-[1.01]' 
-                      : 'border-slate-200 hover:border-blue-400 bg-slate-50/60 hover:bg-blue-50/30'
-                  }`}
-                >
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-blue-600 shadow-2xs mb-2.5">
-                    <Upload className="w-5 h-5" />
-                  </div>
-                  
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-1">
-                    Upload Official PDF Document
-                  </h3>
-                  <p className="text-[11px] sm:text-xs text-slate-500 max-w-sm mb-3">
-                    Drag and drop your official notification, circular, or SOP here, or <span className="text-blue-600 font-semibold underline underline-offset-2">browse files</span>
+                {/* Instructions Header with Upload Option */}
+                <div className="border-t border-slate-100 pt-3 sm:pt-4 mb-3 flex items-center justify-between">
+                  <p className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    Suggested official inquiries to explore:
                   </p>
-
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[10px] sm:text-[11px] font-medium text-slate-600 shadow-2xs">
-                    <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                    <span>PDF format up to 25MB • Auto-indexed with pgvector</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePaperclipClick}
+                    className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+                    title="Upload and index your own PDF document"
+                  >
+                    <Upload className="w-3 h-3" />
+                    <span>Upload your PDF</span>
+                  </button>
                 </div>
 
-                {/* Trust Indicators / Badges */}
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 w-full max-w-md text-left">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/80 flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="text-[11px] font-medium text-slate-700">Exact Citations</span>
-                  </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/80 flex items-center space-x-2">
-                    <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span className="text-[11px] font-medium text-slate-700">Zero Hallucination</span>
-                  </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/80 flex items-center space-x-2">
-                    <FileCheck className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span className="text-[11px] font-medium text-slate-700">Instant Indexing</span>
-                  </div>
+                {/* 4 Interactive Suggestion Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                  {SUGGESTED_PROMPTS.map((prompt, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => executeQuery(prompt.query)}
+                      className="text-left p-3 sm:p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 bg-white/80 backdrop-blur-2xs transition-all group flex flex-col justify-between shadow-2xs"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[10px] uppercase font-bold tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                            {prompt.category}
+                          </span>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+                        </div>
+                        <h3 className="text-xs font-bold text-slate-900 mb-1 leading-snug">
+                          {prompt.title}
+                        </h3>
+                        <p className="text-[11px] text-slate-600 leading-normal line-clamp-2">
+                          &ldquo;{prompt.query}&rdquo;
+                        </p>
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-medium mt-2.5 flex items-center gap-1">
+                        <BookOpen className="w-3 h-3 text-slate-400" />
+                        <span className="truncate">{prompt.sourceLabel}</span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
-
               </div>
             )}
 
@@ -639,17 +671,16 @@ export const AskGovSaarthi: React.FC = () => {
                         </h4>
 
                         {msg.sources.map((src) => {
-                          const isSelected = activeCitation?.citation_id 
+                          const isSelected = activeCitation?.citation_id
                             ? activeCitation.citation_id === src.id
                             : activeCitation?.document_name === src.name && activeCitation?.page_number === src.page;
                           return (
                             <div
                               key={src.id}
-                              className={`border rounded-xl p-3 bg-white flex items-center justify-between transition-all ${
-                                isSelected 
-                                  ? 'border-blue-400 bg-blue-50/20 shadow-2xs' 
-                                  : 'border-slate-200 hover:bg-slate-50/70'
-                              }`}
+                              className={`border rounded-xl p-3 bg-white flex items-center justify-between transition-all ${isSelected
+                                ? 'border-blue-400 bg-blue-50/20 shadow-2xs'
+                                : 'border-slate-200 hover:bg-slate-50/70'
+                                }`}
                             >
                               <div className="flex items-center space-x-3 truncate">
                                 <PdfBadge className="w-6 h-7 shrink-0" />
@@ -733,7 +764,7 @@ export const AskGovSaarthi: React.FC = () => {
 
           {/* PINNED BOTTOM INTERACTION BAR */}
           <div className="shrink-0 relative z-20 bg-white border-t border-slate-100 p-2 sm:p-2.5 px-3 sm:px-4">
-            
+
             {/* UPLOADING PROGRESS BANNER */}
             {uploadingPdf && (
               <div className="flex items-center space-x-2.5 bg-blue-50 border border-blue-200 text-blue-900 text-xs px-3.5 py-2 rounded-xl mb-2 shadow-2xs">
@@ -798,10 +829,10 @@ export const AskGovSaarthi: React.FC = () => {
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}
                 placeholder={
-                  attachedDoc 
+                  attachedDoc
                     ? `Ask about ${attachedDoc.filename}...`
-                    : messages.length === 0 
-                      ? "Ask about government rules, circulars, or portal resources..." 
+                    : messages.length === 0
+                      ? "Ask about government rules, circulars, or portal resources..."
                       : "Ask a follow-up question..."
                 }
                 disabled={loading || uploadingPdf}

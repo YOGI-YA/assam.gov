@@ -198,7 +198,7 @@ def build_pdf(filename="Proof_of_Work_gov_guide_NESFIC_2026.pdf"):
         [Paragraph("<b>Challenge Stream & ID:</b>", td_bold), Paragraph("Stream 1: Governance & Administration · <b>NESFIC-D-36</b>", td_style)],
         [Paragraph("<b>Challenge Title:</b>", td_bold), Paragraph("Trusted Government Knowledge, Rules & Document Assistant", td_style)],
         [Paragraph("<b>Challenge Owners:</b>", td_bold), Paragraph("Administrative Reforms ● Assam Administrative Staff College (AASC) ● Department of Science & Technology (DST) ● Pension & Public Grievances Department ● together with Assam State Space Application Centre (ASSAC)", td_style)],
-        [Paragraph("<b>Proposing Organisation:</b>", td_bold), Paragraph("Department of Computer Science & Engineering, <b>ICFAI University, Himachal Pradesh</b>", td_style)],
+        [Paragraph("<b>Proposing Organisation:</b>", td_bold), Paragraph("Faculty of Science & Technology, <b>ICFAI University, Himachal Pradesh</b>", td_style)],
         [Paragraph("<b>Team Composition:</b>", td_bold), Paragraph("Faculty Technical Lead & Full-Stack Developer + Senior Faculty Mentor & Database Advisor", td_style)],
         [Paragraph("<b>Solution Status:</b>", td_bold), Paragraph("<font color='#065F46'><b>PRODUCTION-VERIFIED MVP (LIVE & DEPLOYED)</b></font>", td_style)],
         [Paragraph("<b>Live Frontend URL:</b>", td_bold), Paragraph("<font color='#0284C7'><u>https://assam-gov-gold.vercel.app/</u></font>", td_style)],
@@ -781,7 +781,7 @@ def build_pdf(filename="Proof_of_Work_gov_guide_NESFIC_2026.pdf"):
 
     sign_off = (
         "<b>CERTIFICATE OF SUBMISSION:</b><br/>"
-        "Submitted by the Academic Faculty Research Team, <b>Department of Computer Science & Engineering, ICFAI University, Himachal Pradesh</b>, "
+        "Submitted by the Academic Faculty Research Team, <b>Faculty of Science & Technology, ICFAI University, Himachal Pradesh</b>, "
         "as an authentic and verified Proof of Work submission for <b>NESFIC 2026 (Stream 1 · NESFIC-D-36)</b>. "
         "The system is production-ready for immediate departmental pilot validation upon onboarding."
     )

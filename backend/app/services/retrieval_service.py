@@ -108,14 +108,29 @@ class RetrievalService:
                 if threshold is None:
                     thresh = min(thresh, 0.15)
 
+        # Extract acronyms and multi-word phrases from query for hybrid precision
+        q_low = query.lower()
+        acronyms = set(re.findall(r'\b[A-Za-z0-9]{2,}\b', query))
+        query_acronyms = {a.lower() for a in acronyms if a.isupper() or len(a) <= 5} - STOPWORDS
+        
+        raw_words = re.findall(r'\b[A-Za-z0-9\-\/]+\b', q_low)
+        phrases = []
+        for n in (4, 3, 2):
+            for i in range(len(raw_words) - n + 1):
+                phrase = ' '.join(raw_words[i:i+n])
+                if not all(w in STOPWORDS for w in raw_words[i:i+n]):
+                    phrases.append(phrase)
+        
+        words = [w for w in raw_words if w not in STOPWORDS and len(w) >= 3]
+
         results: List[Dict[str, Any]] = []
 
         if PG_VECTOR_AVAILABLE:
-            # Native pgvector cosine distance query (<=> operator)
+            # Native pgvector cosine distance query (<=> operator) + Hybrid Lexical Boost
             # cosine similarity = 1 - cosine distance
             try:
                 filter_clause = "WHERE d.processing_status = 'INDEXED'"
-                params = {"query_emb": str(query_embedding), "k": k}
+                params = {"query_emb": str(query_embedding), "k": max(k * 2, 12)}
                 if document_id:
                     filter_clause += " AND d.id = :doc_id"
                     params["doc_id"] = document_id
@@ -125,7 +140,8 @@ class RetrievalService:
                     for i, doc_name in enumerate(allowed_docs):
                         params[f"ad_{i}"] = doc_name
 
-                sql = f"""
+                # 1. Vector query
+                sql_vec = f"""
                     SELECT 
                         c.id as chunk_id,
                         c.document_id,
@@ -139,18 +155,74 @@ class RetrievalService:
                     ORDER BY c.embedding <=> cast(:query_emb as vector)
                     LIMIT :k
                 """
-                cursor = db.execute(text(sql), params)
+                cursor = db.execute(text(sql_vec), params)
+                combined: Dict[str, Dict[str, Any]] = {}
                 for row in cursor.fetchall():
-                    similarity = float(row.similarity)
-                    if similarity >= thresh:
-                        results.append({
-                            "chunk_id": row.chunk_id,
-                            "document_id": row.document_id,
-                            "document_name": row.document_name,
-                            "page_number": row.page_number,
-                            "chunk_text": row.chunk_text,
-                            "similarity": similarity
-                        })
+                    combined[row.chunk_id] = {
+                        "chunk_id": row.chunk_id,
+                        "document_id": row.document_id,
+                        "document_name": row.document_name,
+                        "page_number": row.page_number,
+                        "chunk_text": row.chunk_text,
+                        "similarity": float(row.similarity)
+                    }
+
+                # 2. Keyword lexical query
+                search_terms = list(query_acronyms) + words[:5]
+                if search_terms:
+                    kw_conditions = []
+                    kw_params = dict(params)
+                    for i, term in enumerate(search_terms):
+                        kw_conditions.append(f"c.chunk_text ILIKE :kw_{i}")
+                        kw_params[f"kw_{i}"] = f"%{term}%"
+                    
+                    sql_kw = f"""
+                        SELECT 
+                            c.id as chunk_id,
+                            c.document_id,
+                            d.filename as document_name,
+                            c.page_number,
+                            c.chunk_text,
+                            0.15 as similarity
+                        FROM document_chunks c
+                        JOIN documents d ON c.document_id = d.id
+                        {filter_clause} AND ({' OR '.join(kw_conditions)})
+                        LIMIT :k
+                    """
+                    kw_cursor = db.execute(text(sql_kw), kw_params)
+                    for row in kw_cursor.fetchall():
+                        cid = row.chunk_id
+                        if cid not in combined:
+                            combined[cid] = {
+                                "chunk_id": cid,
+                                "document_id": row.document_id,
+                                "document_name": row.document_name,
+                                "page_number": row.page_number,
+                                "chunk_text": row.chunk_text,
+                                "similarity": 0.15
+                            }
+
+                # 3. Hybrid scoring: apply phrase and acronym boosts
+                for cid, item in combined.items():
+                    t_low = item["chunk_text"].lower()
+                    boost = 0.0
+                    for ph in phrases:
+                        if ph in t_low:
+                            boost += 0.35
+                            break
+                    for acr in query_acronyms:
+                        if re.search(r'\b' + re.escape(acr) + r'\b', t_low):
+                            boost += 0.30
+                    word_cnt = sum(1 for w in words if w in t_low)
+                    boost += min(word_cnt * 0.05, 0.20)
+                    item["similarity"] += boost
+
+                effective_thresh = min(thresh, 0.12) if (query_acronyms or phrases) else thresh
+                for item in combined.values():
+                    if item["similarity"] >= effective_thresh:
+                        results.append(item)
+
+                results.sort(key=lambda x: x["similarity"], reverse=True)
             except Exception as e:
                 db.rollback()
                 logger.warning(f"pgvector query failed, using in-memory retrieval fallback: {e}")

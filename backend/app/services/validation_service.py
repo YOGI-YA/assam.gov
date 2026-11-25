@@ -163,9 +163,9 @@ class ValidationService:
             "disaster": {"ASDMA", "DDMA", "SDRF", "NDRF", "DEOC", "SEOC", "DBT", "PWD", "FIR"},
             "pension": {"PPO", "DCRG", "AG", "PPG", "NOC", "LPC"},
             "secretariat": {"DAK", "SOP"},
-            "geospatial": {"ASSAC", "ISRO", "NRSC", "SAC", "NESAC", "NESDR", "GIS", "GPS", "DEM", "OSM", "NSDI", "NDSAP", "DES", "GSDP", "CPI", "TCP"},
+            "geospatial": {"ASSAC", "ISRO", "NRSC", "SAC", "NESAC", "NESDR", "GIS", "GPS", "DEM", "OSM", "NSDI", "NDSAP", "DES", "GSDP", "CPI", "TCP", "VEDAS", "MOSDAC", "SOI", "AGDI", "USPR", "BHUVAN"},
             "training": {"AASC", "APAR"},
-            "nesfic_proposal": {"USPR", "ASDMA", "ASSAC", "ISRO", "NRSC", "SAC", "NESAC", "NESDR", "DES", "GSDP"}
+            "nesfic_proposal": {"USPR", "ASDMA", "ASSAC", "ISRO", "NRSC", "SAC", "NESAC", "NESDR", "DES", "GSDP", "VEDAS", "MOSDAC", "SOI", "AGDI", "BHUVAN"}
         }
 
         # Extract introductory briefing from the text before the first bullet/claim

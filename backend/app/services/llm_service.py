@@ -1,5 +1,6 @@
 import logging
 import re
+import time
 import httpx
 from typing import List, Tuple, Dict, Any, Optional
 from datetime import datetime
@@ -184,9 +185,13 @@ Only if the provided context contains NO supporting information at all to answer
         return None
 
     def _call_groq_api(self, prompt: str, conversation_history: Optional[List[Dict[str, str]]] = None) -> Optional[str]:
-        """Call Groq API (LPUs) via OpenAI-compatible endpoint with ultra-low latency and 429 backoff retry."""
+        """Call Groq API (LPUs) via OpenAI-compatible endpoint with ultra-low latency and multi-model failover."""
         url = "https://api.groq.com/openai/v1/chat/completions"
-        model_name = self.model or "openai/gpt-oss-120b"
+        models_to_try = [
+            self.model or "openai/gpt-oss-120b",
+            "qwen/qwen3.8-27b",
+            "openai/gpt-oss-20b"
+        ]
 
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         if conversation_history:
@@ -198,31 +203,35 @@ Only if the provided context contains NO supporting information at all to answer
 
         messages.append({"role": "user", "content": prompt})
 
-        payload = {
-            "model": model_name,
-            "messages": messages,
-            "temperature": 0.15,
-            "max_tokens": 1024
-        }
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
-        with httpx.Client(timeout=20.0) as client:
-            for attempt in range(2):
-                resp = client.post(url, json=payload, headers=headers)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    choices = data.get("choices", [])
-                    if choices:
-                        return choices[0].get("message", {}).get("content", "").strip()
-                elif resp.status_code == 429 and attempt == 0:
-                    logger.info("Groq rate limit reached (429) on primary model, falling back to qwen/qwen3.8-27b...")
-                    payload["model"] = "qwen/qwen3.8-27b"
+        with httpx.Client(timeout=25.0) as client:
+            for current_model in models_to_try:
+                payload = {
+                    "model": current_model,
+                    "messages": messages,
+                    "temperature": 0.15,
+                    "max_tokens": 1024
+                }
+                try:
+                    resp = client.post(url, json=payload, headers=headers)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        choices = data.get("choices", [])
+                        if choices:
+                            return choices[0].get("message", {}).get("content", "").strip()
+                    elif resp.status_code in (429, 503):
+                        logger.info(f"Groq rate limit/load ({resp.status_code}) on {current_model}, trying failover model...")
+                        time.sleep(0.4)
+                        continue
+                    else:
+                        logger.error(f"Groq API returned error {resp.status_code} for {current_model}: {resp.text}")
+                except Exception as ex:
+                    logger.warning(f"Groq connection error for {current_model}: {ex}")
+                    time.sleep(0.3)
                     continue
-                else:
-                    logger.error(f"Groq API returned error {resp.status_code}: {resp.text}")
-                    break
         return None
 
     def _call_openai_api(self, prompt: str, conversation_history: Optional[List[Dict[str, str]]] = None) -> Optional[str]:

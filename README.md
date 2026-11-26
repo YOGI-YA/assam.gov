@@ -17,7 +17,7 @@ assam.gov is a secure, source-grounded document intelligence platform developed 
 
 ## 2. Core Functional Modules
 
-### Module 1: Ask GovSaarthi (Flagship 3-Column Interface)
+### Module 1: Ask gov.guide (Flagship 3-Column Interface)
 - **Left Column:** Conversation history, past queries, and document scope filter.
 - **Center Column:** Interactive chat stream with grounded answers, citation pills, copy button, and grounded badges.
 - **Right Column:** Source Document Preview Panel. Clicking any citation immediately loads the original PDF and jumps directly to the cited page, displaying the supporting excerpt side-by-side.
